@@ -1,1 +1,19 @@
-This is my C++ studio repository. It will host my implementation of common algorithms, utilities, etc.
+Repository description
+	This is my C++ studio repository. It will host my implementation of common algorithms, utilities, etc.
+
+Document formating conventions
+	Python style indentation. 4-character indent per level.
+
+Coding conversions
+	Functions
+		At most 4 levels indentation.
+		At most 7 parameters.
+		At most 7 local variables.
+		At most 150 lines.
+
+
+Namespace definitions
+	LiuZan
+		Common utilities, including algorithms.
+	UnitTest
+		Unit test framework and test cases of components in namespace LiuZan.
