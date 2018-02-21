@@ -5,6 +5,8 @@ Document formating conventions
 	Python style indentation. 4-character indent per level.
 
 Coding conversions
+	Naming
+		Capitalized words concatenated with unserscores for constants.
 	Functions
 		At most 4 levels indentation.
 		At most 7 parameters.
