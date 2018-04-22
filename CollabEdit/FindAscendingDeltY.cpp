@@ -36,30 +36,21 @@ pair<int, int> FindMaxAscendingDeltY(vector<Point> const & inPoints)
     // Scanning remaining Points.
     while (int i = 2; i <  inPoints.size(); ++i)
     {
-        if (inPoints[i].y > inPoints[vMinMaxIndics.second].y)
+        int64_t vDeltY = inPoints[i].y - inPoints[vRealMinIndex].y;
+        if (vDeltY > vMaxDeltY)
         {
-            // Solution update condition 1: Higher upper bound, update the inital solution diretly.
-            vMinMaxIndics.second= i;
-            vMaxDeltY = inPoints[vMinMaxIndics.second] - inPoints[vMinMaxIndics.first];
+            // Bigger ascending height, replace the inital solution with a different new solution.
+            vMinMaxIndics.first = vRealMinIndex ;
+            vMinMaxIndics.second = i;
+            vMaxDeltY = vDeltY;
         }
-        else
+        else if (vDeltY < 0)
         {
-            int64_t vDeltY = inPoints[i].y - inPoints[vRealMinIndex ].y;
-             if (vDeltY > vMaxDeltY)
-             {
-                 // Solution update conditon 2: Bigger ascending height, replace the inital solution with a different new solution .
-                 vMinMaxIndics.first = vRealMinIndex ;
-                 vNewMinIndics.second = i;
-                 vMaxDeltY = vDeltY;
-             }
-             else if (vDeltY < 0)
-             {
-                 // Solution update condition 3: Make sure the lower bound of new possible solution has the smallest y that have ever been seen.
-                 vRealMinIndex = i;
-             }               
-         }
-     }
+            // Make sure the lower bound of new possible solution has the smallest y that have ever been seen.
+            vRealMinIndex = i;
+        }               
+    }
 
-     return vMinMaxIndics;
+    return vMinMaxIndics;
 }
 
