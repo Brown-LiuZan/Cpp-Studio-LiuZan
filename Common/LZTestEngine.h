@@ -2,18 +2,18 @@
 #define TEST_ENGINE_H
 
 
-#include <string>
-#include <chrono>
-#include <queue>
-#include <memory>
-#include <thread>
+#include <string> //std::string
+#include <chrono> //std::chrono::milliseconds
+#include <deque> //std::deque
+#include <memory> //std::unique_ptr
+#include <thread> //std::thread
 
 
 class TestCase
 {
 private:
     std::string mName;
-    std::chrono::seconds mTimeout;
+    std::chrono::milliseconds mTimeout;
 
 public:
     explicit TestCase(std::string const & inName)
@@ -34,6 +34,20 @@ public:
 
 class LZTestStream
 {
+private:
+    std::deque<std::unique_ptr<TestCase>> mStream;
+public:
+    void EnqueueCase(std::unique_ptr<TestCase> inNewCase)
+    {
+        mStream.push_back(inNewCase);
+    }
+
+    std::unique_ptr<TestCase> DequeueCase()
+    {
+        std::unique_ptr<TestCase> vHeadCase = mStream.front();
+        mStream.pop_front();
+        return vHeadCase;
+    }
 };
 
 class TestEngine
