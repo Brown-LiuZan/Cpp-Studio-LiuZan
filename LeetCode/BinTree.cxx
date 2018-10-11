@@ -18,6 +18,7 @@
 #include <string>
 #include <functional> //std::function<>
 #include <stack> //std::stack<>
+#include <LZAssert.h> //LiuZan::DynamicAssert<>()
 
 template<typename DataType>
 class BinaryTreeNode
@@ -54,32 +55,33 @@ public:
 
 template<typename DataType>
 void RecursivePreorderTraversal(BinaryTreeNode<DataType> * inRoot,
-                                std::function<void(DataType *, void *)> & inFuncObj,
+                                std::function<void(DataType *, void *)> const & inFuncObj,
                                 void * ioFuncArg)
 {
     if (inRoot == nullptr) return;
 
     inFuncObj(inRoot->mData, ioFuncArg);
-    if (inRoot->mLeft != nullptr) RecursivePreorderTraversal(inRoot->mLeft, inFuncObj);
-    if (inRoot->mRight != nullptr) RecursivePreorderTraversal(inRoot->mRight, inFuncObj);
+    if (inRoot->mLeft != nullptr) RecursivePreorderTraversal(inRoot->mLeft, inFuncObj, ioFuncArg);
+    if (inRoot->mRight != nullptr) RecursivePreorderTraversal(inRoot->mRight, inFuncObj, ioFuncArg);
 }
 
 template<typename DataType>
 void StackedPreorderTraversal(BinaryTreeNode<DataType> * inRoot,
-                              std::function<void(DataType *, void *)> & inFuncObj,
+                              std::function<void(DataType *, void *)> const & inFuncObj,
                               void * ioFuncArg)
 {
     if (nullptr == inRoot) return;
 
-    inFuncObj(inRoot->mData, ioFuncArg);
-
     std::stack<BinaryTreeNode<DataType> *> vAuxStack;
+
+    inFuncObj(inRoot->mData, ioFuncArg);
     if (inRoot->mRight != nullptr) vAuxStack.push(inRoot->mRight);
     if (inRoot->mLeft != nullptr) vAuxStack.push(inRoot->mLeft);
     while (!vAuxStack.empty())
     {
         BinaryTreeNode<DataType> * vNode = vAuxStack.top();
         vAuxStack.pop();
+
         inFuncObj(vNode->mData, ioFuncArg);
         if (vNode->mRight != nullptr) vAuxStack.push(vNode->mRight);
         if (vNode->mLeft != nullptr) vAuxStack.push(vNode->mLeft);
@@ -88,20 +90,137 @@ void StackedPreorderTraversal(BinaryTreeNode<DataType> * inRoot,
 
 template<typename DataType>
 void MorrisPreorderTraversal(BinaryTreeNode<DataType> * inRoot,
-                             std::function<void(DataType *, void *)> & inFuncOjb,
+                             std::function<void(DataType *, void *)> const & inFuncObj,
                              void * ioFuncArg)
 {
     BinaryTreeNode<DataType> * vCur = inRoot;
-    BinaryTreeNode<DataType> * vPrev= nullptr;
 
     while (vCur != nullptr)
     {
-        if (vCur->mLeft == nullptr)
+        if (nullptr == vCur->mLeft)
         {
-            inFuncObj(vCur->mData, nullptr);
+            inFuncObj(vCur->mData, ioFuncArg);
+            vCur = vCur->mRight;
         }
         else
         {
+            //Find the prevous node in order.
+            BinaryTreeNode<DataType> * vNode = vCur->mLeft;
+            while (vNode->mRight != nullptr && vNode->mRight != vCur)
+            {
+                vNode = vNode->mRight;
+            }
+
+            if (nullptr == vNode->mRight)
+            { //Touch the previous node in order first time. Record me as its right child for going back.
+                inFuncObj(vCur->mData, ioFuncArg);
+                vNode->mRight = vCur;
+                vCur = vCur->mLeft;
+            }
+            else
+            { //Touch the previous node second time during going back. Reset its right child.
+                vNode->mRight = nullptr;
+                vCur = vCur->mRight;
+            }
+        }
+    }
+}
+
+template<typename DataType>
+void RecursiveMidorderTraversal(BinaryTreeNode<DataType> * inRoot,
+                                std::function<void(DataType *, void *)> const & inFuncObj,
+                                void * ioFuncArg)
+{
+    if (nullptr == inRoot) return;
+
+    if (inRoot->mLeft != nullptr) RecursiveMidorderTraversal(inRoot->mLeft, inFuncObj, ioFuncArg);
+    inFuncObj(inRoot->mData, ioFuncArg);
+    if (inRoot->mRight != nullptr) RecursiveMidorderTraversal(inRoot->mRight, inFuncObj, ioFuncArg);
+}
+
+template<typename DataType>
+void StackedMidorderTraversal(BinaryTreeNode<DataType> * inRoot,
+                              std::function<void(DataType *, void *)> const & inFuncObj,
+                              void * ioFuncArg)
+{
+    if (nullptr == inRoot) return;
+
+    std::stack<BinaryTreeNode<DataType> *> vAuxStack;
+
+    if (inRoot->mRight != nullptr)
+    {
+        vAuxStack.push(inRoot->mRight);
+    }
+    if (inRoot->mLeft != nullptr)
+    {
+        vAuxStack.push(inRoot);
+        vAuxStack.push(nullptr);
+        vAuxStack.push(inRoot->mLeft);
+    }
+    else
+    {
+        inFuncObj(inRoot->mData, ioFuncArg);
+    }
+    while (!vAuxStack.empty())
+    {
+        BinaryTreeNode<DataType> * vTop = vAuxStack.top();
+        vAuxStack.pop();
+
+        if (nullptr == vTop)
+        {
+            vTop = vAuxStack.top();
+            vAuxStack.pop();
+            inFuncObj(vTop->mData, ioFuncArg);
+            continue;
+        }
+
+        if (vTop->mRight != nullptr)
+        {
+            vAuxStack.push(vTop->mRight);
+        }
+        if (vTop->mLeft != nullptr)
+        {
+            vAuxStack.push(vTop);
+            vAuxStack.push(nullptr);
+            vAuxStack.push(vTop->mLeft);
+        }
+        else
+        {
+            inFuncObj(vTop->mData, ioFuncArg);
+        }
+    }
+}
+
+template<typename DataType>
+void MorrisMidorderTraversal(BinaryTreeNode<DataType> * inRoot,
+                             std::function<void(DataType *, void *)> const & inFuncObj,
+                             void * ioFuncArg)
+{
+    BinaryTreeNode<DataType> * vCur = inRoot;
+
+    while (vCur != nullptr)
+    {
+        if (nullptr == vCur->mLeft)
+        {
+            inFuncObj(vCur->mData, ioFuncArg);
+            vCur = vCur->mRight;
+        }
+        else
+        {
+            BinaryTreeNode<DataType> * vNode = vCur->mLeft;
+            while (vNode->mRight != nullptr && vNode->mRight != vCur) vNode = vNode->mRight;
+
+            if (nullptr == vNode->mRight)
+            {
+                vNode->mRight = vCur;
+                vCur = vCur->mLeft;
+            }
+            else
+            {
+                inFuncObj(vCur->mData, ioFuncArg);
+                vNode->mRight = nullptr;
+                vCur = vCur->mRight;
+            }
         }
     }
 }
@@ -126,13 +245,30 @@ int main(void)
     vSubRoot->mLeft = vLeft;
     vSubRoot->mRight = vRight;
     
-    std::function<void(std::string *)> vFuncObj = [](std::string * vStr, void * vOtherArgs) {
-        std::cout << *vStr << std::endl; };
+    std::function<void(std::string *, void *)> vFuncObj = [](std::string * vStr, void * vOtherArgs) {
+        std::cout << *vStr << "->"; };
 
     std::cout << "===>Output of recursive preorder traversal<===" << std::endl;
     RecursivePreorderTraversal(vBinTree, vFuncObj, nullptr);
+    std::cout << std::endl; 
     std::cout << "===>Output of stacked preorder traversal<===" << std::endl;
     StackedPreorderTraversal(vBinTree, vFuncObj, nullptr);
+    std::cout << std::endl; 
+    std::cout << "===>Output of Morris preorder traversal<===" << std::endl;
+    MorrisPreorderTraversal(vBinTree, vFuncObj, nullptr);
+    std::cout << std::endl; 
+    std::cout << std::endl; 
+
+    std::cout << "===>Output of recursive midorder traversal<===" << std::endl;
+    RecursiveMidorderTraversal(vBinTree, vFuncObj, nullptr);
+    std::cout << std::endl; 
+    std::cout << "===>Output of stacked midorder traversal<===" << std::endl;
+    StackedMidorderTraversal(vBinTree, vFuncObj, nullptr);
+    std::cout << std::endl; 
+    std::cout << "===>Output of Morris midorder traversal<===" << std::endl;
+    MorrisMidorderTraversal(vBinTree, vFuncObj, nullptr);
+    std::cout << std::endl; 
+    std::cout << std::endl; 
 
     return 0;
 }
