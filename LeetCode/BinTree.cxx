@@ -225,6 +225,18 @@ void MorrisMidorderTraversal(BinaryTreeNode<DataType> * inRoot,
     }
 }
 
+template<typename DataType>
+void RecursivePostorderTraversal(BinaryTreeNode<DataType> * inRoot,
+                                 std::function<void(DataType *, void *)> const & inFuncObj,
+                                 void * ioFuncArg)
+{
+    if (nullptr == inRoot) return;
+
+    if (inRoot->mLeft != nullptr) RecursivePostorderTraversal(inRoot->mLeft, inFuncObj, ioFuncArg);
+    if (inRoot->mRight != nullptr) RecursivePostorderTraversal(inRoot->mRight, inFuncObj, ioFuncArg);
+    inFuncObj(inRoot->mData, ioFuncArg);
+}
+
 int main(void)
 {
     BinaryTreeNode<std::string> * vBinTree = new BinaryTreeNode<std::string>(nullptr, nullptr, new std::string("L0_0"));
