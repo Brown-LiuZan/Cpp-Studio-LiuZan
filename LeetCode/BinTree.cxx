@@ -14,11 +14,13 @@
  *     queued iterative traversal: Space O(n), Time O(n)
  * */
 
+#define DYNAMIC_ASSERT_EXCEPTION 
+#include <LZAssert.h> //LiuZan::DynamicAssert<>()
 #include <iostream>
 #include <string>
 #include <functional> //std::function<>
 #include <stack> //std::stack<>
-#include <LZAssert.h> //LiuZan::DynamicAssert<>()
+#include <queue> //std::queue<>
 
 template<typename DataType>
 class BinaryTreeNode
@@ -237,6 +239,61 @@ void RecursivePostorderTraversal(BinaryTreeNode<DataType> * inRoot,
     inFuncObj(inRoot->mData, ioFuncArg);
 }
 
+template<typename DataType>
+void StackedPostorderTraversal(BinaryTreeNode<DataType> * inRoot,
+                               std::function<void(DataType *, void *)> const & inFuncObj,
+                               void * ioFuncArg)
+{
+    if (nullptr == inRoot) return;
+
+    std::stack<BinaryTreeNode<DataType> *> vAuxStack;
+
+    vAuxStack.push(inRoot);
+    vAuxStack.push(nullptr);
+    if (inRoot->mRight != nullptr) vAuxStack.push(inRoot->mRight);
+    if (inRoot->mLeft != nullptr) vAuxStack.push(inRoot->mLeft);
+    while (!vAuxStack.empty())
+    {
+        BinaryTreeNode<DataType> * vNode = vAuxStack.top();
+
+        if (nullptr == vNode) {
+            vAuxStack.pop();
+            vNode = vAuxStack.top();
+            vAuxStack.pop();
+            inFuncObj(vNode->mData, ioFuncArg);
+            continue;
+        }
+        else
+        {
+            vAuxStack.push(nullptr);
+            if (vNode->mRight != nullptr) vAuxStack.push(vNode->mRight);
+            if (vNode->mLeft != nullptr) vAuxStack.push(vNode->mLeft);
+        }
+    }
+}
+
+template<typename DataType>
+void MorrisPostorderTraversal(BinaryTreeNode<DataType> * inRoot,
+                              std::function<void(DataType *, void *)> const & inFuncObj,
+                              void * ioFuncArg)
+{
+    LiuZan::DynamicAssert(false,
+        "Morris traversal isn't suitable to postorder traversal due to no recording space guarantee.\n"
+        "In postorder traversel, the prevous/next node in order is the root of subtree.");
+}
+
+#if 0
+template<typename DataType>
+void HierarchicalTraversal(BinaryTreeNode<DataType> * inRoot,
+                           std::function<void(DataType *, void *)> const & inFuncObj,
+                           void * ioFuncArg)
+{
+    std::queue<BinaryTreeNode<DataType> *> vQueue;
+
+    
+}
+#endif
+
 int main(void)
 {
     BinaryTreeNode<std::string> * vBinTree = new BinaryTreeNode<std::string>(nullptr, nullptr, new std::string("L0_0"));
@@ -282,5 +339,19 @@ int main(void)
     std::cout << std::endl; 
     std::cout << std::endl; 
 
+    std::cout << "===>Output of recursive postorder traversal<===" << std::endl;
+    RecursivePostorderTraversal(vBinTree, vFuncObj, nullptr);
+    std::cout << std::endl; 
+    std::cout << "===>Output of stacked postorder traversal<===" << std::endl;
+    StackedPostorderTraversal(vBinTree, vFuncObj, nullptr);
+    std::cout << std::endl; 
+    std::cout << "===>Output of Morris postorder traversal<===" << std::endl;
+    try {
+        MorrisPostorderTraversal(vBinTree, vFuncObj, nullptr);
+    } catch (LiuZan::AssertException const & e) {
+        std::cout << e.what();
+        std::cout << std::endl; 
+        std::cout << std::endl; 
+    }
     return 0;
 }
