@@ -21,6 +21,7 @@
 #include <functional> //std::function<>
 #include <stack> //std::stack<>
 #include <queue> //std::queue<>
+#include <deque> //std::deque<>
 
 template<typename DataType>
 class BinaryTreeNode
@@ -282,18 +283,80 @@ void MorrisPostorderTraversal(BinaryTreeNode<DataType> * inRoot,
         "In postorder traversel, the prevous/next node in order is the root of subtree.");
 }
 
-#if 0
 template<typename DataType>
-void HierarchicalTraversal(BinaryTreeNode<DataType> * inRoot,
-                           std::function<void(DataType *, void *)> const & inFuncObj,
-                           void * ioFuncArg)
+void RightwardHierarchicalTraversal(BinaryTreeNode<DataType> * inRoot,
+                                    std::function<void(DataType *, void *)> const & inFuncObj,
+                                    void * ioFuncArg)
 {
+    if (nullptr == inRoot) return;
+
     std::queue<BinaryTreeNode<DataType> *> vQueue;
 
-    
+    inFuncObj(inRoot->mData, ioFuncArg);    
+    if (inRoot->mLeft != nullptr) vQueue.push(inRoot->mLeft);
+    if (inRoot->mRight != nullptr) vQueue.push(inRoot->mRight);
+    while (!vQueue.empty())
+    {
+        BinaryTreeNode<DataType> * vNode = vQueue.front();
+        vQueue.pop();
+        inFuncObj(vNode->mData, ioFuncArg);
+        if (vNode->mLeft != nullptr) vQueue.push(vNode->mLeft);
+        if (vNode->mRight != nullptr) vQueue.push(vNode->mRight);
+    }
 }
-#endif
 
+template<typename DataType>
+void ZwardHierarchicalTraversal(BinaryTreeNode<DataType> * inRoot,
+                                std::function<void(DataType *, void *)> const & inFuncObj,
+                                void * ioFuncArg)
+{
+    if (nullptr == inRoot) return;
+    
+    std::deque<BinaryTreeNode<DataType> *> vAuxDeque;
+
+    vAuxDeque.push_back(inRoot);
+    vAuxDeque.push_back(nullptr);
+    BinaryTreeNode<DataType> * vNode = nullptr;
+    bool vRightward = true;
+    while (!vAuxDeque.empty())
+    {
+        if (vRightward)
+        {
+            vNode = vAuxDeque.front();
+            vAuxDeque.pop_front();
+        }
+        else
+        {
+            vNode = vAuxDeque.back();
+            vAuxDeque.pop_back();
+        }
+
+        if (nullptr == vNode)
+        {
+            if (!vAuxDeque.empty())
+            {
+                vRightward = !vRightward;
+                if (vRightward) vAuxDeque.push_back(nullptr);
+                else vAuxDeque.push_front(nullptr);
+            }
+        }
+        else
+        {
+            inFuncObj(vNode->mData, ioFuncArg);
+            if (vRightward)
+            {
+                if (vNode->mLeft != nullptr) vAuxDeque.push_back(vNode->mLeft);
+                if (vNode->mRight != nullptr) vAuxDeque.push_back(vNode->mRight);
+            }
+            else
+            {
+                if (vNode->mRight != nullptr) vAuxDeque.push_front(vNode->mRight);
+                if (vNode->mLeft != nullptr) vAuxDeque.push_front(vNode->mLeft);
+            }
+        }
+    }
+}
+                     
 int main(void)
 {
     BinaryTreeNode<std::string> * vBinTree = new BinaryTreeNode<std::string>(nullptr, nullptr, new std::string("L0_0"));
@@ -353,5 +416,16 @@ int main(void)
         std::cout << std::endl; 
         std::cout << std::endl; 
     }
+
+    std::cout << "===>Output of rightward hierarchical traversal<===" << std::endl;
+    RightwardHierarchicalTraversal(vBinTree, vFuncObj, nullptr);
+    std::cout << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "===>Output of zward hierarchical traversal<===" << std::endl;
+    ZwardHierarchicalTraversal(vBinTree, vFuncObj, nullptr);
+    std::cout << std::endl;
+    std::cout << std::endl;
+
     return 0;
 }
