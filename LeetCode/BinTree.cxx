@@ -357,7 +357,7 @@ void ZwardHierarchicalTraversal(BinaryTreeNode<DataType> * inRoot,
     }
 }
                      
-int main(void)
+int TestBinaryTreeTraversal(void)
 {
     BinaryTreeNode<std::string> * vBinTree = new BinaryTreeNode<std::string>(nullptr, nullptr, new std::string("L0_0"));
     BinaryTreeNode<std::string> * vLeft = new BinaryTreeNode<std::string>(nullptr, nullptr, new std::string("L1_0"));
@@ -428,4 +428,9 @@ int main(void)
     std::cout << std::endl;
 
     return 0;
+}
+
+int main(void)
+{
+    return TestBinaryTreeTraversal();
 }
