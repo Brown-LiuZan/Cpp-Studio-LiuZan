@@ -1,4 +1,5 @@
 #include <iostream>
+#include <gtest/gtest.h>
 
 
 class MyGlobalFriendClass;
@@ -30,10 +31,9 @@ public:
     }
 };
 
-int main()
+TEST(CppUsage, Friendship)
 {
     MyGlobalFriendClass vObj;
-
     vObj.Test();
 }
 

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <gtest/gtest.h>
 
 class GlobalClass
 {
@@ -41,9 +42,8 @@ namespace Outer
     }
 }
 
-int main(void)
+TEST(CppUsage, Namespace)
 {
-    Outer::Inner::InnerClass vTestObj;
-    vTestObj.Test();
-    return 0;
+    Outer::Inner::InnerClass vObj;
+    vObj.Test();
 }
