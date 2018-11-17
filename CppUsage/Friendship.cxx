@@ -2,6 +2,7 @@
 
 
 class MyGlobalFriendClass;
+class NonExistedClass;
 
 namespace LiuZan
 {
@@ -10,6 +11,7 @@ namespace LiuZan
         //A cross-namespace-boundary friend declaration needs
         //a fully qualified name.
         friend class ::MyGlobalFriendClass;
+        friend class ::NonExistedClass;
 
         void SayHi()
         {

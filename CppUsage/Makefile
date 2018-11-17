@@ -11,7 +11,8 @@ CXX_FLAGS += -g
 #CXX_SRC = CCUTestMain.cxx
 #CXX_SRC = RawString.cxx
 #CXX_SRC = Utility.cxx
-CXX_SRC = CCUFriendClass.cxx
+CXX_SRC = Friendship.cxx
+#CXX_SRC = Namespace.cxx
 
 all : ${EXECUTIVE}
 
