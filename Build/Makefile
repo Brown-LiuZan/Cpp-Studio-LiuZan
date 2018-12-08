@@ -20,20 +20,41 @@ GTEST_DIR = ../GTest/googletest
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
 TESTS = cppusage.exe
+TESTS += stdcxxusage.exe
 
 
-# C++ compiler
-CXX = brown-g++-8.2.0
+# C++ building chain
+CXX_VER = 8
+ifeq (${CXX_VER}, 4)
+    CXX = g++
+else ifeq (${CXX_VER}, 7)
+    CXX = brown-g++-7.3.0
+else ifeq (${CXX_VER}, 8)
+    CXX = brown-g++-8.2.0
+endif
 
 
 # Flags passed to the preprocessor.
 # Set Google Test's header directory as a system directory, such that
 # the compiler doesn't generate warnings in Google Test headers.
+# '-isystem' for '#include <*>'
 CPPFLAGS += -isystem ${GTEST_DIR}/include
 
 
 # Flags passed to the C++ compiler.
 CXXFLAGS += -g -Wall -Wextra -pthread -std=c++17
+
+
+# Flags passed to the linker.
+# /etc/ld.so.conf.d/brown-cpp-studio.conf
+#LDFLAGS = 
+ifeq (${CXX_VER}, 4)
+    #LDFLAGS += -L/usr/lib64 -lstdc++
+else ifeq (${CXX_VER}, 7)
+    #LDFLAGS += -L/usr/local/gcc-7.3.0/lib64 -lstdc++
+else ifeq (${CXX_VER}, 8)
+    #LDFLAGS += -L/usr/local/gcc-8.2.0/lib64 -lstdc++
+endif
 
 
 # House-keeping build targets.
@@ -58,12 +79,12 @@ GTEST_SRCS_ = ${GTEST_DIR}/src/*.cc ${GTEST_DIR}/src/*.h ${GTEST_HEADERS}
 ## conservative and not optimized.  This is fine as Google Test
 ## compiles fast and for ordinary users its source rarely changes.
 gtest-all.o : ${GTEST_SRCS_}
-	${CXX} ${CPPFLAGS} -I${GTEST_DIR} ${CXXFLAGS} -c \
-            ${GTEST_DIR}/src/gtest-all.cc
+	${CXX} ${CPPFLAGS} -I${GTEST_DIR} ${CXXFLAGS} ${LDFLAGS} \
+    -c ${GTEST_DIR}/src/gtest-all.cc
 
 gtest_main.o : ${GTEST_SRCS_}
-	${CXX} ${CPPFLAGS} -I${GTEST_DIR} ${CXXFLAGS} -c \
-            ${GTEST_DIR}/src/gtest_main.cc
+	${CXX} ${CPPFLAGS} -I${GTEST_DIR} ${CXXFLAGS} ${LDFLAGS} \
+    -c ${GTEST_DIR}/src/gtest_main.cc
 
 gtest.a : gtest-all.o
 	$(AR) $(ARFLAGS) $@ $^
@@ -78,9 +99,16 @@ CPP_USAGE_DIR = ../CppUsage
 CPP_USAGE_SRCS = ${CPP_USAGE_DIR}/*.cxx
 #CPP_USAGE_SRCS += ${CPP_USAGE_DIR}/*.cpp
 #CPP_USAGE_SRCS += ${CPP_USAGE_DIR}/*.cc
-#CPP_HEADERS = ${CPP_USAGE_DIR}/*.h
-#CPP_HEADERS += ${CPP_USAGE_DIR}/*.hpp
+#CPP_USAGE_HEADERS = ${CPP_USAGE_DIR}/*.h
+#CPP_USAGE_HEADERS += ${CPP_USAGE_DIR}/*.hpp
 
-cppusage.exe : ${CPP_USAGE_SRCS} ${CPP_HEADERS} gtest_main.a
-	${CXX} ${CPPFLAGS} ${CXXFLAGS} -lpthread $^ -o $@
+cppusage.exe : ${CPP_USAGE_SRCS} ${CPP_USAGE_HEADERS} gtest_main.a
+	${CXX} ${CPPFLAGS} ${CXXFLAGS} ${LDFLAGS} -lpthread $^ -o $@
 
+##stdcxxusage
+STDCXX_USAGE_DIR = ../StdCxxUsage
+STDCXX_USAGE_SRCS = ${STDCXX_USAGE_DIR}/*.cxx
+STDCXX_USAGE_HEADERS = ${STDCXX_USAGE_DIR}/*.h
+
+stdcxxusage.exe : ${STDCXX_USAGE_SRCS} ${STDCXX_USAGE_HEADERS} gtest_main.a
+	${CXX} ${CPPFLAGS} ${CXXFLAGS} ${LDFLAGS} -lpthread $^ -o $@
