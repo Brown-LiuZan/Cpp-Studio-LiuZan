@@ -14,76 +14,109 @@
 
 # Points to the root of Google Test, relative to where this file is.
 # Remember to tweak this if you move this file.
-GTEST_DIR = ../GTest/googletest
+GTEST_DIR := ../GTest/googletest
 
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = cppusage.exe
+TESTS := cppusage.exe
 TESTS += stdcxxusage.exe
 
 
 # C++ building chain
-CXX_VER = 8
+CXX_VER := 8
 ifeq (${CXX_VER}, 4)
-    CXX = g++
+    BUILD_CHAIN_DIR := /usr/local/gcc-4.9.4/bin
+    LIB_DIR := /usr/local/gcc-4.9.4/lib64
+    CXX := ${BUILD_CHAIN_DIR}/brown-g++-4.9.4
+    AR := ${BUILD_CHAIN_DIR}/brown-gcc-ar-4.9.4
+    NM := ${BUILD_CHAIN_DIR}/brown-gcc-nm-4.9.4
+else ifeq (${CXX_VER}, 5)
+    BUILD_CHAIN_DIR := /usr/local/gcc-5.5.0/bin
+    LIB_DIR := /usr/local/gcc-5.5.0/lib64
+    CXX := ${BUILD_CHAIN_DIR}/brown-g++-5.5.0
+    AR := ${BUILD_CHAIN_DIR}/brown-gcc-ar-5.5.0
+    NM := ${BUILD_CHAIN_DIR}/brown-gcc-nm-5.5.0
+else ifeq (${CXX_VER}, 6)
+    BUILD_CHAIN_DIR := /usr/local/gcc-6.5.0/bin
+    LIB_DIR := /usr/local/gcc-6.5.0/lib64
+    CXX := ${BUILD_CHAIN_DIR}/brown-g++-6.5.0
+    AR := ${BUILD_CHAIN_DIR}/brown-gcc-ar-6.5.0
+    NM := ${BUILD_CHAIN_DIR}/brown-gcc-nm-6.5.0
 else ifeq (${CXX_VER}, 7)
-    CXX = brown-g++-7.3.0
+    BUILD_CHAIN_DIR := /usr/local/gcc-7.4.0/bin
+    LIB_DIR := /usr/local/gcc-7.4.0/lib64
+    CXX := ${BUILD_CHAIN_DIR}/brown-g++-7.4.0
+    AR := ${BUILD_CHAIN_DIR}/brown-gcc-ar-7.4.0
+    NM := ${BUILD_CHAIN_DIR}/brown-gcc-nm-7.4.0
 else ifeq (${CXX_VER}, 8)
-    CXX = brown-g++-8.2.0
-endif
+    BUILD_CHAIN_DIR := /usr/local/gcc-8.2.0/bin
+    LIB_DIR := /usr/local/gcc-8.2.0/lib64
+    CXX := ${BUILD_CHAIN_DIR}/brown-g++-8.2.0
+    AR := ${BUILD_CHAIN_DIR}/brown-gcc-ar-8.2.0
+    NM := ${BUILD_CHAIN_DIR}/brown-gcc-nm-8.2.0
+endif # CXX_VER
 
 
 # Flags passed to the preprocessor.
 # Set Google Test's header directory as a system directory, such that
 # the compiler doesn't generate warnings in Google Test headers.
 # '-isystem' for '#include <*>'
-CPPFLAGS += -isystem ${GTEST_DIR}/include
+CPPFLAGS := -isystem ${GTEST_DIR}/include
 
 
 # Flags passed to the C++ compiler.
-CXXFLAGS += -g -Wall -Wextra -pthread -std=c++17
+CXXFLAGS := -g -Wall -Wextra -pthread
+STD_VER := 11
+ifeq (${STD_VER}, 98)
+    CXXFLAGS += -std=c++98
+else ifeq (${STD_VER}, 11)
+    CXXFLAGS += -std=c++11
+else ifeq (${STD_VER}, 14)
+    CXXFLAGS += -std=c++14
+else ifeq (${STD_VER}, 17)
+    CXXFLAGS += -std=c++17
+else ifeq (${STD_VER}, 20)
+    CXXFLAGS += -std=c++20
+else
+    $(error Invalid C++ version: ${STD_VER})
+endif # STD_VER
 
 
 # Flags passed to the linker.
-# /etc/ld.so.conf.d/brown-cpp-studio.conf
-#LDFLAGS = 
-ifeq (${CXX_VER}, 4)
-    #LDFLAGS += -L/usr/lib64 -lstdc++
-else ifeq (${CXX_VER}, 7)
-    #LDFLAGS += -L/usr/local/gcc-7.3.0/lib64 -lstdc++
-else ifeq (${CXX_VER}, 8)
-    #LDFLAGS += -L/usr/local/gcc-8.2.0/lib64 -lstdc++
-endif
+# To link static C++ std library, we must give both following things:
+#     -static-libstdc++
+#     ${PathName} instead of '-L${Lib_Dir} -lstdc++'
+#LDFLAGS := -static-libstdc++ -L${LIB_DIR} -lstdc++
+#LDFLAGS := ${LIB_DIR}/libstdc++.a -lpthread
+LDFLAGS := -static-libstdc++ ${LIB_DIR}/libstdc++.a
+LDFLAGS += -lpthread
 
 
 # House-keeping build targets.
 all : ${TESTS}
 
-clean :
-	rm -f ${TESTS} gtest.a gtest_main.a *.o
-
 
 # Builds gtest.a and gtest_main.a.
 ## All Google Test headers.  Usually you shouldn't change this
 ## definition.
-GTEST_HEADERS = ${GTEST_DIR}/include/gtest/*.h \
+GTEST_HEADERS := ${GTEST_DIR}/include/gtest/*.h \
                 ${GTEST_DIR}/include/gtest/internal/*.h
 
 ## Usually you shouldn't tweak such internal variables, indicated by a
 ## trailing _.
-GTEST_SRCS_ = ${GTEST_DIR}/src/*.cc ${GTEST_DIR}/src/*.h ${GTEST_HEADERS}
+GTEST_SRCS_ := ${GTEST_DIR}/src/*.cc ${GTEST_DIR}/src/*.h ${GTEST_HEADERS}
 
 ## For simplicity and to avoid depending on Google Test's
 ## implementation details, the dependencies specified below are
 ## conservative and not optimized.  This is fine as Google Test
 ## compiles fast and for ordinary users its source rarely changes.
 gtest-all.o : ${GTEST_SRCS_}
-	${CXX} ${CPPFLAGS} -I${GTEST_DIR} ${CXXFLAGS} ${LDFLAGS} \
+	${CXX} ${CPPFLAGS} -I${GTEST_DIR} ${CXXFLAGS} \
     -c ${GTEST_DIR}/src/gtest-all.cc
 
 gtest_main.o : ${GTEST_SRCS_}
-	${CXX} ${CPPFLAGS} -I${GTEST_DIR} ${CXXFLAGS} ${LDFLAGS} \
+	${CXX} ${CPPFLAGS} -I${GTEST_DIR} ${CXXFLAGS} \
     -c ${GTEST_DIR}/src/gtest_main.cc
 
 gtest.a : gtest-all.o
@@ -95,20 +128,43 @@ gtest_main.a : gtest-all.o gtest_main.o
 
 # Individual testing programs and their source files.
 ##cppusage
-CPP_USAGE_DIR = ../CppUsage
-CPP_USAGE_SRCS = ${CPP_USAGE_DIR}/*.cxx
-#CPP_USAGE_SRCS += ${CPP_USAGE_DIR}/*.cpp
-#CPP_USAGE_SRCS += ${CPP_USAGE_DIR}/*.cc
-#CPP_USAGE_HEADERS = ${CPP_USAGE_DIR}/*.h
-#CPP_USAGE_HEADERS += ${CPP_USAGE_DIR}/*.hpp
+CPP_USAGE_DIR := ../CppUsage
+# Following won't work. Resort to shell command to do it.
+#CPP_USAGE_SRCS := ${CPP_USAGE_DIR}/*.cxx
+CPP_USAGE_SRCS := $(shell ls ${CPP_USAGE_DIR}/*.cxx)
+#CPP_USAGE_SRCS += $(shell ls ${CPP_USAGE_DIR}/*.cpp)
+#CPP_USAGE_SRCS += $(shell ls ${CPP_USAGE_DIR}/*.cc)
+#CPP_USAGE_HEADERS := $(shell ls ${CPP_USAGE_DIR}/*.h)
+#CPP_USAGE_HEADERS += $(shell ls ${CPP_USAGE_DIR}/*.hpp)
+#$(info ${CPP_USAGE_SRCS})
+CPP_USAGE_OBJS := $(patsubst %.cxx,%.o,${CPP_USAGE_SRCS})
+#$(info ${CPP_USAGE_OBJS})
 
-cppusage.exe : ${CPP_USAGE_SRCS} ${CPP_USAGE_HEADERS} gtest_main.a
-	${CXX} ${CPPFLAGS} ${CXXFLAGS} ${LDFLAGS} -lpthread $^ -o $@
+${CPP_USAGE_DIR}/%.o : ${CPP_USAGE_DIR}/%.cxx
+	${CXX} -o $@ -c $< ${CPPFLAGS} ${CXXFLAGS}
+# For dependencies on header files, add extra reciples.
+
+cppusage.exe : ${CPP_USAGE_OBJS} gtest_main.a
+	${CXX} -o $@ $^ ${LDFLAGS}
 
 ##stdcxxusage
-STDCXX_USAGE_DIR = ../StdCxxUsage
-STDCXX_USAGE_SRCS = ${STDCXX_USAGE_DIR}/*.cxx
-STDCXX_USAGE_HEADERS = ${STDCXX_USAGE_DIR}/*.h
+STDCXX_USAGE_DIR := ../StdCxxUsage
+STDCXX_USAGE_SRCS := $(shell ls ${STDCXX_USAGE_DIR}/*.cxx)
+STDCXX_USAGE_HEADERS := $(shell ls ${STDCXX_USAGE_DIR}/*.h)
+#$(info ${STDCXX_USAGE_SRCS})
+STDCXX_USAGE_OBJS := $(patsubst %.cxx,%.o,${STDCXX_USAGE_SRCS})
+#$(info ${STDCXX_USAGE_OBJS})
 
-stdcxxusage.exe : ${STDCXX_USAGE_SRCS} ${STDCXX_USAGE_HEADERS} gtest_main.a
-	${CXX} ${CPPFLAGS} ${CXXFLAGS} ${LDFLAGS} -lpthread $^ -o $@
+${STDCXX_USAGE_DIR}/%.o : ${STDCXX_USAGE_DIR}/%.cxx ${STDCXX_USAGE_HEADERS}
+	${CXX} -o $@ -c $< ${CPPFLAGS} ${CXXFLAGS}
+
+stdcxxusage.exe : ${STDCXX_USAGE_OBJS} gtest_main.a
+	${CXX} -o $@ $^ ${LDFLAGS}
+
+
+# House-keeping target
+clean :
+	rm -f ${TESTS} gtest.a gtest_main.a *.o
+	rm -f ${CPP_USAGE_DIR}/*.o
+	rm -f ${STDCXX_USAGE_DIR}/*.o
+

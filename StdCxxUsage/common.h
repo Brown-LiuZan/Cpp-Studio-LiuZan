@@ -79,6 +79,45 @@ private:
     bool mIsMale;
 };
 
+class GeoLocation {
+public:
+    GeoLocation(float longitude, float latitude, float altitude):
+        mLongitude(longitude),
+        mLatitude(latitude),
+        mAltitude(altitude)
+    {}
+    GeoLocation():
+        GeoLocation(0.0f, 0.0f, 0.0f)
+    {}
+    float GetLongitude() const
+    {
+        return mLongitude;
+    }
+    float GetLatitude() const
+    {
+        return mLatitude;
+    }
+    float GetAltitude() const
+    {
+        return mAltitude;
+    }
+    void SetLongitude(float longitude)
+    {
+        mLongitude = longitude;
+    }
+    void SetLatitude(float latitude)
+    {
+        mLatitude = latitude;
+    }
+    void SetAltitude(float altitude)
+    {
+        mAltitude = altitude;
+    }
+private:
+    float mLongitude;
+    float mLatitude;
+    float mAltitude;
+};
 
 } // namespace StdCxxUsage
 
