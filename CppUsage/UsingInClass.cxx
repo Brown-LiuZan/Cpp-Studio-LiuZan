@@ -1,8 +1,12 @@
+//#define GTEST_DISABLED
+#ifdef GTEST_DISABLED
 #include <assert.h>
+#else
+#include <gtest/gtest.h>
+#endif //GTEST_DISABLED
 #include <iostream>
 #include <vector>
 
-//#define GTEST_DISABLED
 
 using namespace std;
 
@@ -18,7 +22,7 @@ public:
         cout << endl;
 
         vector<int> vVec = {0, 1, 2, 3};
-        for (int i = 0; i < vVec.size(); ++i)
+        for (unsigned i = 0; i < vVec.size(); ++i)
         {
 #ifdef GTEST_DISABLED
             assert(vVec[i] == i);
@@ -36,7 +40,7 @@ public:
 #ifdef GTEST_DISABLED
 int main(void)
 #else
-TEST(CppUsage, UsingInFunction)
+TEST(CppUsage, UsingInClass)
 #endif
 {
     DummyClass vObj;

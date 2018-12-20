@@ -1,8 +1,12 @@
+//#define GTEST_DISABLED
+#ifdef GTEST_DISABLED
 #include <assert.h>
+#else
+#include <gtest/gtest.h>
+#endif // GTEST_DISABLED
 #include <iostream>
 #include <vector>
 
-//#define GTEST_DISABLED
 
 static void RunTest()
 {
@@ -12,7 +16,7 @@ static void RunTest()
     cout << endl;
 
     vector<int> vVec = {0, 1, 2, 3};
-    for (int i = 0; i < vVec.size(); ++i)
+    for (unsigned i = 0; i < vVec.size(); ++i)
     {
 #ifdef GTEST_DISABLED
         assert(vVec[i] == i);
