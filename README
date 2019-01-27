@@ -25,6 +25,12 @@ C++ is better than C
     C++ has native support of common utilities
         Common utilities
 
+Coding style:
+    See Google C++ Style Guide:
+        https://google.github.io/styleguide/cppguide.html
+    For Google C++ Style Guide, there is a script to check:
+        https://raw.githubusercontent.com/google/styleguide/gh-pages/cpplint/cpplint.py
+
 Coding conversions
 	Naming
 		Capitalized words concatenated with unserscores for constants.
@@ -33,7 +39,6 @@ Coding conversions
 		At most 7 parameters.
 		At most 7 local variables.
 		At most 150 lines.
-
 
 Namespace definitions
 	LiuZan
