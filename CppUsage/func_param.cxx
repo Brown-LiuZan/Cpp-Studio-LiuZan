@@ -1,7 +1,4 @@
-#include <gtest.h>
+#include <gtest/gtest.h>
 
 
-TEST(CppUsage, ConstRefParam)
-{
 
-}

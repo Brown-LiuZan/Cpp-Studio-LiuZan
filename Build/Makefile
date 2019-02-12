@@ -12,9 +12,11 @@
 # project, except GTEST_HEADERS, which you can use in your own targets
 # but shouldn't modify.
 
-# Points to the root of Google Test, relative to where this file is.
-# Remember to tweak this if you move this file.
+# gtest src files
 GTEST_DIR := ../GTest/googletest
+
+# gmock src files
+GMOCK_DIR := ../GTest/googlemock
 
 
 # All tests produced by this Makefile.  Remember to add new tests you
@@ -59,10 +61,13 @@ endif # CXX_VER
 
 
 # Flags passed to the preprocessor.
+# '-isystem' for '#include <*>'
 # Set Google Test's header directory as a system directory, such that
 # the compiler doesn't generate warnings in Google Test headers.
-# '-isystem' for '#include <*>'
 CPPFLAGS := -isystem ${GTEST_DIR}/include
+# Set Google Mock's header directory as a system directory, such that
+# the compiler doesn't generate warnings in Google Test headers.
+CPPFLAGS += -isystem ${GMOCK_DIR}/include
 
 
 # Flags passed to the C++ compiler.
