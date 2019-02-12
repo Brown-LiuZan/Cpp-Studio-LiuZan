@@ -87,8 +87,6 @@ endif # STD_VER
 # To link static C++ std library, we must give both following things:
 #     -static-libstdc++
 #     ${PathName} instead of '-L${Lib_Dir} -lstdc++'
-#LDFLAGS := -static-libstdc++ -L${LIB_DIR} -lstdc++
-#LDFLAGS := ${LIB_DIR}/libstdc++.a -lpthread
 LDFLAGS := -static-libstdc++ ${LIB_DIR}/libstdc++.a
 LDFLAGS += -lpthread
 
@@ -134,9 +132,10 @@ CPP_USAGE_DIR := ../CppUsage
 CPP_USAGE_SRCS := $(shell ls ${CPP_USAGE_DIR}/*.cxx)
 #CPP_USAGE_SRCS += $(shell ls ${CPP_USAGE_DIR}/*.cpp)
 #CPP_USAGE_SRCS += $(shell ls ${CPP_USAGE_DIR}/*.cc)
+#$(info ${CPP_USAGE_SRCS})
 #CPP_USAGE_HEADERS := $(shell ls ${CPP_USAGE_DIR}/*.h)
 #CPP_USAGE_HEADERS += $(shell ls ${CPP_USAGE_DIR}/*.hpp)
-#$(info ${CPP_USAGE_SRCS})
+#$(info ${CPP_USAGE_HEADERS})
 CPP_USAGE_OBJS := $(patsubst %.cxx,%.o,${CPP_USAGE_SRCS})
 #$(info ${CPP_USAGE_OBJS})
 
@@ -150,8 +149,9 @@ cppusage.exe : ${CPP_USAGE_OBJS} gtest_main.a
 ##stdcxxusage
 STDCXX_USAGE_DIR := ../StdCxxUsage
 STDCXX_USAGE_SRCS := $(shell ls ${STDCXX_USAGE_DIR}/*.cxx)
-STDCXX_USAGE_HEADERS := $(shell ls ${STDCXX_USAGE_DIR}/*.h)
 #$(info ${STDCXX_USAGE_SRCS})
+STDCXX_USAGE_HEADERS := $(shell ls ${STDCXX_USAGE_DIR}/*.h)
+#$(info ${STDCXX_USAGE_HEADERS})
 STDCXX_USAGE_OBJS := $(patsubst %.cxx,%.o,${STDCXX_USAGE_SRCS})
 #$(info ${STDCXX_USAGE_OBJS})
 
