@@ -31,6 +31,7 @@ else ifeq (${BUILD_TOOL_CHAIN_VER}, 5)
     AR := ${BUILD_CHAIN_DIR}/brown-gcc-ar-5.5.0
     NM := ${BUILD_CHAIN_DIR}/brown-gcc-nm-5.5.0
 else ifeq (${BUILD_TOOL_CHAIN_VER}, 6)
+#   constexpr supported from this version on
     BUILD_CHAIN_DIR := /usr/local/gcc-6.5.0/bin
     LIB_DIR := /usr/local/gcc-6.5.0/lib64
     CXX := ${BUILD_CHAIN_DIR}/brown-g++-6.5.0
@@ -241,7 +242,7 @@ ALGORITHMS_DIR :=
 ALGORITHMS_DIR += ${ROOT_DIR}/Algorithms
 #     Source files
 ALGORITHMS_SRCS :=
-ALGORITHMS_SRCS += $(shell ls ${ALGORITHMS_DIR}/*.cxx)
+#ALGORITHMS_SRCS += $(shell ls ${ALGORITHMS_DIR}/*.cxx)
 #ALGORITHMS_SRCS += $(shell ls ${ALGORITHMS_DIR}/*.cpp)
 #ALGORITHMS_SRCS += $(shell ls ${ALGORITHMS_DIR}/*.cc)
 ifeq (${INFO_ENABLED}, 1)
@@ -249,7 +250,7 @@ $(info "Source files of algorithms.exe: ${ALGORITHMS_SRCS}")
 endif
 #     Header files
 ALGORITHMS_HEADERS :=
-ALGORITHMS_HEADERS += $(shell ls ${ALGORITHMS_DIR}/*.h)
+#ALGORITHMS_HEADERS += $(shell ls ${ALGORITHMS_DIR}/*.h)
 #ALGORITHMS_HEADERS += $(shell ls ${ALGORITHMS_DIR}/*.hpp)
 ifeq (${INFO_ENABLED}, 1)
 $(info "Header files of algorithms.exe: ${ALGORITHMS_HEADERS}")
