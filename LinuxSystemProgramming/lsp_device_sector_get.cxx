@@ -11,7 +11,9 @@
 #include <sys/ioctl.h> //ioctl()
 #include <sys/mount.h> //BLKSSZGET
 
-int main()
+#include <gtest/gtest.h>
+
+void DevSecSizeGetTest()
 {
 #if 0
     int vFd = open("UsageOfDevSecSizeGet.txt", O_TRUNC | O_SYNC | O_RDWR | O_CREAT, S_IRWXU);
@@ -21,7 +23,7 @@ int main()
     if (vFd < 0) {
         std::cerr << "Failed to open file:[" << errno << "] " << strerror(errno) << std::endl;
         if (EACCES == errno) std::cerr << "Please run it as the root user." << std::endl;
-        return -1;
+        return;
     } else {
         std::cout << "Succeeded to open file" << std::endl;
     }
@@ -44,7 +46,7 @@ int main()
 #endif
     }
 
-    CLEANUP:
+CLEANUP:
     vFd = close(vFd);
     if (vFd != 0) {
         std::cerr << "Failed to close file." << std::endl;
@@ -52,6 +54,9 @@ int main()
     } else {
         std::cout << "Succeeded to close file." << std::endl;
     }
+}
 
-    return vRc;
+TEST(IoSubsystemUsageTest, DevSecSizeGetTest)
+{
+    DevSecSizeGetTest();
 }

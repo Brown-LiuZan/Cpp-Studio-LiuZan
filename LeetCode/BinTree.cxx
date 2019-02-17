@@ -14,14 +14,16 @@
  *     queued iterative traversal: Space O(n), Time O(n)
  * */
 
-#define DYNAMIC_ASSERT_EXCEPTION 
-#include <LZAssert.h> //LiuZan::DynamicAssert<>()
+#define DYNAMIC_ASSERT_EXCEPTION
+#include "Common/assert.h" //liuzan::DynamicAssert<>()
 #include <iostream>
 #include <string>
 #include <functional> //std::function<>
 #include <stack> //std::stack<>
 #include <queue> //std::queue<>
 #include <deque> //std::deque<>
+
+#include <gtest/gtest.h>
 
 template<typename DataType>
 class BinaryTreeNode
@@ -278,7 +280,7 @@ void MorrisPostorderTraversal(BinaryTreeNode<DataType> * inRoot,
                               std::function<void(DataType *, void *)> const & inFuncObj,
                               void * ioFuncArg)
 {
-    LiuZan::DynamicAssert(false,
+    liuzan::DynamicAssert(false,
         "Morris traversal isn't suitable to postorder traversal due to no recording space guarantee.\n"
         "In postorder traversel, the prevous/next node in order is the root of subtree.");
 }
@@ -292,7 +294,7 @@ void RightwardHierarchicalTraversal(BinaryTreeNode<DataType> * inRoot,
 
     std::queue<BinaryTreeNode<DataType> *> vQueue;
 
-    inFuncObj(inRoot->mData, ioFuncArg);    
+    inFuncObj(inRoot->mData, ioFuncArg);
     if (inRoot->mLeft != nullptr) vQueue.push(inRoot->mLeft);
     if (inRoot->mRight != nullptr) vQueue.push(inRoot->mRight);
     while (!vQueue.empty())
@@ -311,7 +313,7 @@ void ZwardHierarchicalTraversal(BinaryTreeNode<DataType> * inRoot,
                                 void * ioFuncArg)
 {
     if (nullptr == inRoot) return;
-    
+
     std::deque<BinaryTreeNode<DataType> *> vAuxDeque;
 
     vAuxDeque.push_back(inRoot);
@@ -356,7 +358,7 @@ void ZwardHierarchicalTraversal(BinaryTreeNode<DataType> * inRoot,
         }
     }
 }
-                     
+
 int TestBinaryTreeTraversal(void)
 {
     BinaryTreeNode<std::string> * vBinTree = new BinaryTreeNode<std::string>(nullptr, nullptr, new std::string("L0_0"));
@@ -376,45 +378,45 @@ int TestBinaryTreeTraversal(void)
     vRight = new BinaryTreeNode<std::string>(nullptr, nullptr, new std::string("L2_3"));
     vSubRoot->mLeft = vLeft;
     vSubRoot->mRight = vRight;
-    
+
     std::function<void(std::string *, void *)> vFuncObj = [](std::string * vStr, void * vOtherArgs) {
         std::cout << *vStr << "->"; };
 
     std::cout << "===>Output of recursive preorder traversal<===" << std::endl;
     RecursivePreorderTraversal(vBinTree, vFuncObj, nullptr);
-    std::cout << std::endl; 
+    std::cout << std::endl;
     std::cout << "===>Output of stacked preorder traversal<===" << std::endl;
     StackedPreorderTraversal(vBinTree, vFuncObj, nullptr);
-    std::cout << std::endl; 
+    std::cout << std::endl;
     std::cout << "===>Output of Morris preorder traversal<===" << std::endl;
     MorrisPreorderTraversal(vBinTree, vFuncObj, nullptr);
-    std::cout << std::endl; 
-    std::cout << std::endl; 
+    std::cout << std::endl;
+    std::cout << std::endl;
 
     std::cout << "===>Output of recursive midorder traversal<===" << std::endl;
     RecursiveMidorderTraversal(vBinTree, vFuncObj, nullptr);
-    std::cout << std::endl; 
+    std::cout << std::endl;
     std::cout << "===>Output of stacked midorder traversal<===" << std::endl;
     StackedMidorderTraversal(vBinTree, vFuncObj, nullptr);
-    std::cout << std::endl; 
+    std::cout << std::endl;
     std::cout << "===>Output of Morris midorder traversal<===" << std::endl;
     MorrisMidorderTraversal(vBinTree, vFuncObj, nullptr);
-    std::cout << std::endl; 
-    std::cout << std::endl; 
+    std::cout << std::endl;
+    std::cout << std::endl;
 
     std::cout << "===>Output of recursive postorder traversal<===" << std::endl;
     RecursivePostorderTraversal(vBinTree, vFuncObj, nullptr);
-    std::cout << std::endl; 
+    std::cout << std::endl;
     std::cout << "===>Output of stacked postorder traversal<===" << std::endl;
     StackedPostorderTraversal(vBinTree, vFuncObj, nullptr);
-    std::cout << std::endl; 
+    std::cout << std::endl;
     std::cout << "===>Output of Morris postorder traversal<===" << std::endl;
     try {
         MorrisPostorderTraversal(vBinTree, vFuncObj, nullptr);
     } catch (LiuZan::AssertException const & e) {
         std::cout << e.what();
-        std::cout << std::endl; 
-        std::cout << std::endl; 
+        std::cout << std::endl;
+        std::cout << std::endl;
     }
 
     std::cout << "===>Output of rightward hierarchical traversal<===" << std::endl;
@@ -430,7 +432,7 @@ int TestBinaryTreeTraversal(void)
     return 0;
 }
 
-int main(void)
+TEST(LeetCode, BinTreeTest)
 {
-    return TestBinaryTreeTraversal();
+    TestBinaryTreeTraversal();
 }

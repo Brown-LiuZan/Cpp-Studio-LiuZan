@@ -5,6 +5,8 @@
 #include<string>
 #include<cstdint>
 
+#include"Common/cpp_version_macro.h"
+
 
 namespace liuzan {
 namespace cxxusage {

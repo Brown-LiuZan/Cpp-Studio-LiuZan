@@ -1,5 +1,5 @@
-#ifndef LZ_ASSERT_H
-#define LZ_ASSERT_H
+#ifndef LIUZAN_COMMON_ASSERT_H
+#define LIUZAN_COMMON_ASSERT_H
 
 
 #include <stdexcept> //std::runtime_error
@@ -8,7 +8,7 @@
 #include <exception> //std::terminate()
 
 
-namespace LiuZan
+namespace liuzan
 {
     enum DynamicAssertActionLevel
     {
@@ -28,7 +28,7 @@ namespace LiuZan
  *     Instead and for clarification, user shall use one of three DYNAMIC_ASSERT_* exclusively.
  *     If none of three macro is defined, LZ_DAAL_NONE will be assigned to DEFUALT_DAAL and DynamicAssert will be
  *     optimized out by compiler.
- * */ 
+ * */
 #ifdef DEBUG
 #define DEFUALT_DAAL LZ_DAAL_ABORT
 #else //!DEBUG
@@ -108,7 +108,7 @@ namespace LiuZan
     template<>
     void DynamicAssert<false>(bool inPredicate) {}
 
-#define StaticAssert static_assert 
-}
+#define StaticAssert static_assert
+}  // namesapce liuzan
 
-#endif //LZ_ASSERT_H
+#endif // LIUZAN_COMMON_ASSERT_H
