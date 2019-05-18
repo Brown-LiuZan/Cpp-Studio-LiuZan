@@ -1,3 +1,6 @@
+#include <vector>
+#include <limits>
+
 /****
  Merge k sorted linked lists and return it as one sorted list. Analyze and describe its complexity.
 
@@ -11,15 +14,15 @@
  ]
  Output: 1->1->2->3->4->4->5->6
  ****/
- 
-#include <vector>
+
+using namespace std;
 
 // Definition for singly-linked list.
 struct ListNode
 {
     int val;
     ListNode *next;
-    ListNode(int x) : val(x), next(NULL) {}
+    ListNode(int x) : val(x), next(nullptr) {}
 };
 
 class Solution
@@ -31,7 +34,7 @@ private:
         int mVal;
         ListNode const * mpListNode;
 
-        MPQNode() : mListIndex{-1}, mVal{INT_MAX}, mpListNode{nullptr}
+        MPQNode() : mListIndex{-1}, mVal{numeric_limits<int>::max()}, mpListNode{nullptr}
         {}
         
         MPQNode(int inListIndex, ListNode const * inpListNode)

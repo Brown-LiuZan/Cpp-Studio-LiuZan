@@ -6,3 +6,7 @@ Build/*.o
 Build/*.exe
 Build/*.a
 Build/*.so
+Algorithms/*.o
+CxxUsage/*.o
+StdCxxUsage/*.o
+

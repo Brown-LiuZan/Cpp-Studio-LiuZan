@@ -275,6 +275,8 @@ void StackedPostorderTraversal(BinaryTreeNode<DataType> * inRoot,
     }
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 template<typename DataType>
 void MorrisPostorderTraversal(BinaryTreeNode<DataType> * inRoot,
                               std::function<void(DataType *, void *)> const & inFuncObj,
@@ -284,6 +286,7 @@ void MorrisPostorderTraversal(BinaryTreeNode<DataType> * inRoot,
         "Morris traversal isn't suitable to postorder traversal due to no recording space guarantee.\n"
         "In postorder traversel, the prevous/next node in order is the root of subtree.");
 }
+#pragma GCC diagnostic pop
 
 template<typename DataType>
 void RightwardHierarchicalTraversal(BinaryTreeNode<DataType> * inRoot,
@@ -380,7 +383,9 @@ int TestBinaryTreeTraversal(void)
     vSubRoot->mRight = vRight;
 
     std::function<void(std::string *, void *)> vFuncObj = [](std::string * vStr, void * vOtherArgs) {
-        std::cout << *vStr << "->"; };
+        std::cout << *vStr << "->";
+        if (vOtherArgs != nullptr) return;
+    };
 
     std::cout << "===>Output of recursive preorder traversal<===" << std::endl;
     RecursivePreorderTraversal(vBinTree, vFuncObj, nullptr);
@@ -413,7 +418,7 @@ int TestBinaryTreeTraversal(void)
     std::cout << "===>Output of Morris postorder traversal<===" << std::endl;
     try {
         MorrisPostorderTraversal(vBinTree, vFuncObj, nullptr);
-    } catch (LiuZan::AssertException const & e) {
+    } catch (liuzan::AssertException const & e) {
         std::cout << e.what();
         std::cout << std::endl;
         std::cout << std::endl;
@@ -432,7 +437,7 @@ int TestBinaryTreeTraversal(void)
     return 0;
 }
 
-TEST(LeetCode, BinTreeTest)
+TEST(Algorithms, TestBinTreeSolution)
 {
     TestBinaryTreeTraversal();
 }

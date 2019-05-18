@@ -99,6 +99,8 @@ namespace liuzan
         DynamicAssert<Workable>(inPredicate, vTempStr);
     }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
     template<>
     void DynamicAssert<false>(bool inPredicate, std::string const & inMsg) {}
 
@@ -107,6 +109,7 @@ namespace liuzan
 
     template<>
     void DynamicAssert<false>(bool inPredicate) {}
+#pragma GCC diagnostic pop
 
 #define StaticAssert static_assert
 }  // namesapce liuzan

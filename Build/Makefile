@@ -17,7 +17,7 @@ WARNING_ENABLED := 1
 ERROR_ENABLED := 1
 
 # C++ building tool chain
-BUILD_TOOL_CHAIN_VER := 8
+BUILD_TOOL_CHAIN_VER := 9
 ifeq (${BUILD_TOOL_CHAIN_VER}, 4)
     BUILD_CHAIN_DIR := /usr/local/gcc-4.9.4/bin
     LIB_DIR := /usr/local/gcc-4.9.4/lib64
@@ -44,11 +44,17 @@ else ifeq (${BUILD_TOOL_CHAIN_VER}, 7)
     AR := ${BUILD_CHAIN_DIR}/brown-gcc-ar-7.4.0
     NM := ${BUILD_CHAIN_DIR}/brown-gcc-nm-7.4.0
 else ifeq (${BUILD_TOOL_CHAIN_VER}, 8)
-    BUILD_CHAIN_DIR := /usr/local/gcc-8.2.0/bin
-    LIB_DIR := /usr/local/gcc-8.2.0/lib64
-    CXX := ${BUILD_CHAIN_DIR}/brown-g++-8.2.0
-    AR := ${BUILD_CHAIN_DIR}/brown-gcc-ar-8.2.0
-    NM := ${BUILD_CHAIN_DIR}/brown-gcc-nm-8.2.0
+    BUILD_CHAIN_DIR := /usr/local/gcc-8.3.0/bin
+    LIB_DIR := /usr/local/gcc-8.3.0/lib64
+    CXX := ${BUILD_CHAIN_DIR}/brown-g++-8.3.0
+    AR := ${BUILD_CHAIN_DIR}/brown-gcc-ar-8.3.0
+    NM := ${BUILD_CHAIN_DIR}/brown-gcc-nm-8.3.0
+else ifeq (${BUILD_TOOL_CHAIN_VER}, 9)
+    BUILD_CHAIN_DIR := /usr/local/gcc-9.1.0/bin
+    LIB_DIR := /usr/local/gcc-9.1.0/lib64
+    CXX := ${BUILD_CHAIN_DIR}/brown-g++-9.1.0
+    AR := ${BUILD_CHAIN_DIR}/brown-gcc-ar-9.1.0
+    NM := ${BUILD_CHAIN_DIR}/brown-gcc-nm-9.1.0
 endif # BUILD_TOOL_CHAIN_VER
 ifeq (${INFO_ENABLED}, 1)
 $(info "Building tool chain directory: ${BUILD_CHAIN_DIR}")
@@ -83,7 +89,8 @@ CXXFLAGS += -Wall -Wextra
 #   Threading options
 CXXFLAGS += -pthread
 #   Language options
-STD_VER := 11
+#STD_VER := 17 #C++17 is supported by g++-6.5.0 and later versions.
+STD_VER := 2a
 ifeq (${STD_VER}, 98)
     CXXFLAGS += -std=c++98
 else ifeq (${STD_VER}, 11)
@@ -94,6 +101,8 @@ else ifeq (${STD_VER}, 17)
     CXXFLAGS += -std=c++17
 else ifeq (${STD_VER}, 20)
     CXXFLAGS += -std=c++20
+else ifeq (${STD_VER}, 2a)
+    CXXFLAGS += -std=c++2a
 else
     $(error Invalid C++ version: ${STD_VER})
 endif # STD_VER
@@ -121,7 +130,7 @@ endif
 TARGETS :=
 TARGETS += cxxusage.exe
 TARGETS += stdcxxusage.exe
-#TARGETS += algorithms.exe
+TARGETS += algorithms.exe
 TARGETS += lsp.exe
 
 # Rules of all targets.
@@ -129,8 +138,8 @@ all : ${TARGETS}
 
 # Common header files
 COMMON_HEADERS :=
-COMMON_HEADERS += $(shell ls ${COMMON_DIR}/*.h)
-#COMMON_HEADERS += $(shell ls ${COMMON_DIR}/*.hpp)
+COMMON_HEADERS += $(shell ls ${COMMON_DIR}/*.h 2>/dev/null)
+COMMON_HEADERS += $(shell ls ${COMMON_DIR}/*.hpp 2>/dev/null)
 ifeq (${INFO_ENABLED}, 1)
 $(info "Common header files: ${COMMON_HEADERS}")
 endif
@@ -162,25 +171,27 @@ gtest_main.a : gtest-all.o gtest_main.o
 CXX_USAGE_DIR :=
 CXX_USAGE_DIR += ${ROOT_DIR}/CxxUsage
 #     Source files
-CXX_USAGE_SRCS :=
-CXX_USAGE_SRCS += $(shell ls ${CXX_USAGE_DIR}/*.cxx)
-#CXX_USAGE_SRCS += $(shell ls ${CXX_USAGE_DIR}/*.cpp)
-#CXX_USAGE_SRCS += $(shell ls ${CXX_USAGE_DIR}/*.cc)
+CXX_USAGE_SRCS_CXX = $(shell ls ${CXX_USAGE_DIR}/*.cxx 2>/dev/null)
+CXX_USAGE_SRCS_CPP = $(shell ls ${CXX_USAGE_DIR}/*.cpp 2>/dev/null)
+CXX_USAGE_SRCS_CC = $(shell ls ${CXX_USAGE_DIR}/*.cc 2>/dev/null)
+CXX_USAGE_SRCS += ${CXX_USAGE_SRCS_CXX}
+CXX_USAGE_SRCS += ${CXX_USAGE_SRCS_CPP}
+CXX_USAGE_SRCS += ${CXX_USAGE_SRCS_CC}
 ifeq (${INFO_ENABLED}, 1)
 $(info "Source files of cxxusage.exe: ${CXX_USAGE_SRCS}")
 endif
 #     Header files
-#CXX_USAGE_HEADERS :=
-#CXX_USAGE_HEADERS += $(shell ls ${CXX_USAGE_DIR}/*.h)
-#CXX_USAGE_HEADERS += $(shell ls ${CXX_USAGE_DIR}/*.hpp)
+CXX_USAGE_HEADERS :=
+CXX_USAGE_HEADERS += $(shell ls ${CXX_USAGE_DIR}/*.h 2>/dev/null)
+CXX_USAGE_HEADERS += $(shell ls ${CXX_USAGE_DIR}/*.hpp 2>/dev/null)
 ifeq (${INFO_ENABLED}, 1)
 $(info "Header files of cxxusage.exe: ${CXX_USAGE_HEADERS}")
 endif
 #     Object files
 CXX_USAGE_OBJS :=
-CXX_USAGE_OBJS += $(patsubst %.cxx,%.o,${CXX_USAGE_SRCS})
-#CXX_USAGE_OBJS += $(patsubst %.cpp,%.o,${CXX_USAGE_SRCS})
-#CXX_USAGE_OBJS += $(patsubst %.cc,%.o,${CXX_USAGE_SRCS})
+CXX_USAGE_OBJS += $(patsubst %.cxx,%.o,${CXX_USAGE_SRCS_CXX})
+CXX_USAGE_OBJS += $(patsubst %.cpp,%.o,${CXX_USAGE_SRCS_CPP})
+CXX_USAGE_OBJS += $(patsubst %.cc,%.o,${CXX_USAGE_SRCS_CC})
 ifeq (${INFO_ENABLED}, 1)
 $(info "Object files of cxxusage.exe: ${CXX_USAGE_OBJS}")
 endif
@@ -201,25 +212,27 @@ cxxusage.exe : ${CXX_USAGE_PREREQUISITES}
 STDCXX_USAGE_DIR :=
 STDCXX_USAGE_DIR += ${ROOT_DIR}/StdCxxUsage
 #     Source files
-STDCXX_USAGE_SRCS :=
-STDCXX_USAGE_SRCS += $(shell ls ${STDCXX_USAGE_DIR}/*.cxx)
-#STDCXX_USAGE_SRCS += $(shell ls ${STDCXX_USAGE_DIR}/*.cpp)
-#STDCXX_USAGE_SRCS += $(shell ls ${STDCXX_USAGE_DIR}/*.cc)
+STDCXX_USAGE_SRCS_CXX = $(shell ls ${STDCXX_USAGE_DIR}/*.cxx 2>/dev/null)
+STDCXX_USAGE_SRCS_CPP = $(shell ls ${STDCXX_USAGE_DIR}/*.cpp 2>/dev/null)
+STDCXX_USAGE_SRCS_CC = $(shell ls ${STDCXX_USAGE_DIR}/*.cc 2>/dev/null)
+STDCXX_USAGE_SRCS += ${STDCXX_USAGE_SRCS_CXX}
+STDCXX_USAGE_SRCS += ${STDCXX_USAGE_SRCS_CPP}
+STDCXX_USAGE_SRCS += ${STDCXX_USAGE_SRCS_CC}
 ifeq (${INFO_ENABLED}, 1)
 $(info "Source files of stdcxxusage.exe: ${STDCXX_USAGE_SRCS}")
 endif
 #     Header files
 STDCXX_USAGE_HEADERS :=
-STDCXX_USAGE_HEADERS += $(shell ls ${STDCXX_USAGE_DIR}/*.h)
-#STDCXX_USAGE_HEADERS += $(shell ls ${STDCXX_USAGE_DIR}/*.hpp)
+STDCXX_USAGE_HEADERS += $(shell ls ${STDCXX_USAGE_DIR}/*.h 2>/dev/null)
+STDCXX_USAGE_HEADERS += $(shell ls ${STDCXX_USAGE_DIR}/*.hpp 2>/dev/null)
 ifeq (${INFO_ENABLED}, 1)
 $(info "Header files of stdcxxusage.exe: ${STDCXX_USAGE_HEADERS}")
 endif
 #     Object files
 STDCXX_USAGE_OBJS :=
-STDCXX_USAGE_OBJS += $(patsubst %.cxx,%.o,${STDCXX_USAGE_SRCS})
-#STDCXX_USAGE_OBJS += $(patsubst %.cpp,%.o,${STDCXX_USAGE_SRCS})
-#STDCXX_USAGE_OBJS += $(patsubst %.cc,%.o,${STDCXX_USAGE_SRCS})
+STDCXX_USAGE_OBJS += $(patsubst %.cxx,%.o,${STDCXX_USAGE_SRCS_CXX})
+STDCXX_USAGE_OBJS += $(patsubst %.cpp,%.o,${STDCXX_USAGE_SRCS_CPP})
+STDCXX_USAGE_OBJS += $(patsubst %.cc,%.o,${STDCXX_USAGE_SRCS_CC})
 ifeq (${INFO_ENABLED}, 1)
 $(info "Object files of stdcxxusage.exe: ${STDCXX_USAGE_OBJS}")
 endif
@@ -241,25 +254,27 @@ stdcxxusage.exe : ${STDCXX_USAGE_PREREQUSITES}
 ALGORITHMS_DIR :=
 ALGORITHMS_DIR += ${ROOT_DIR}/Algorithms
 #     Source files
-ALGORITHMS_SRCS :=
-#ALGORITHMS_SRCS += $(shell ls ${ALGORITHMS_DIR}/*.cxx)
-#ALGORITHMS_SRCS += $(shell ls ${ALGORITHMS_DIR}/*.cpp)
-#ALGORITHMS_SRCS += $(shell ls ${ALGORITHMS_DIR}/*.cc)
+ALGORITHMS_SRCS_CXX += $(shell ls ${ALGORITHMS_DIR}/*.cxx 2>/dev/null)
+ALGORITHMS_SRCS_CPP += $(shell ls ${ALGORITHMS_DIR}/*.cpp 2>/dev/null)
+ALGORITHMS_SRCS_CC += $(shell ls ${ALGORITHMS_DIR}/*.cc 2>/dev/null)
+ALGORITHMS_SRCS += ${ALGORITHMS_SRCS_CXX}
+ALGORITHMS_SRCS += ${ALGORITHMS_SRCS_CPP}
+ALGORITHMS_SRCS += ${ALGORITHMS_SRCS_CC}
 ifeq (${INFO_ENABLED}, 1)
 $(info "Source files of algorithms.exe: ${ALGORITHMS_SRCS}")
 endif
 #     Header files
 ALGORITHMS_HEADERS :=
-#ALGORITHMS_HEADERS += $(shell ls ${ALGORITHMS_DIR}/*.h)
-#ALGORITHMS_HEADERS += $(shell ls ${ALGORITHMS_DIR}/*.hpp)
+ALGORITHMS_HEADERS += $(shell ls ${ALGORITHMS_DIR}/*.h 2>/dev/null)
+ALGORITHMS_HEADERS += $(shell ls ${ALGORITHMS_DIR}/*.hpp 2>/dev/null)
 ifeq (${INFO_ENABLED}, 1)
 $(info "Header files of algorithms.exe: ${ALGORITHMS_HEADERS}")
 endif
 #     Object files
 ALGORITHMS_OBJS :=
-ALGORITHMS_OBJS += $(patsubst %.cxx,%.o,${ALGORITHMS_SRCS})
-#ALGORITHMS_OBJS += $(patsubst %.cpp,%.o,${ALGORITHMS_SRCS})
-#ALGORITHMS_OBJS += $(patsubst %.cc,%.o,${ALGORITHMS_SRCS})
+ALGORITHMS_OBJS += $(patsubst %.cxx,%.o,${ALGORITHMS_SRCS_CXX})
+ALGORITHMS_OBJS += $(patsubst %.cpp,%.o,${ALGORITHMS_SRCS_CPP})
+ALGORITHMS_OBJS += $(patsubst %.cc,%.o,${ALGORITHMS_SRCS_CC})
 ifeq (${INFO_ENABLED}, 1)
 $(info "Object files of algorithms: ${ALGORITHMS_OBJS}")
 endif
@@ -269,6 +284,7 @@ ${ALGORITHMS_DIR}/%.o : ${ALGORITHMS_DIR}/%.cxx
 	${CXX} -o $@ -c $< ${CPPFLAGS} ${CXXFLAGS}
 #       Overall rule
 ALGORITHMS_PREREQUSITES :=
+ALGORITHMS_PREREQUSITES += gtest_main.a
 ALGORITHMS_PREREQUSITES += ${ALGORITHMS_OBJS}
 ALGORITHMS_PREREQUSITES += ${ALGORITHMS_HEADERS}
 ALGORITHMS_PREREQUSITES += ${COMMON_HEADERS}
