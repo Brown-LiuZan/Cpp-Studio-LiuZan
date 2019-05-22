@@ -26,20 +26,20 @@ namespace liuzan
  *     DYNAMIC_ASSERT_ERRMSG > DYNAMIC_ASSERT_EXCEPTION > DYNAMIC_ASSERT_ABORT
  *     Actually, DEFAULT_DAAL could never be specified by user.
  *     Instead and for clarification, user shall use one of three DYNAMIC_ASSERT_* exclusively.
- *     If none of three macro is defined, LZ_DAAL_NONE will be assigned to DEFUALT_DAAL and DynamicAssert will be
+ *     If none of three macro is defined, LZ_DAAL_NONE will be assigned to DEFUALT_DAAL and __DynamicAssert__ will be
  *     optimized out by compiler.
  * */
 #ifdef DEBUG
-#define DEFUALT_DAAL LZ_DAAL_ABORT
+#define DEFUALT_DAAL liuzan::LZ_DAAL_ABORT
 #else //!DEBUG
 #if defined(DYNAMIC_ASSERT_ERRMSG)
-#define DEFUALT_DAAL LZ_DAAL_ERROR_MESSAGE
+#define DEFUALT_DAAL liuzan::LZ_DAAL_ERROR_MESSAGE
 #elif defined(DYNAMIC_ASSERT_EXCEPTION)
-#define DEFUALT_DAAL LZ_DAAL_THROW_EXCEPTION
+#define DEFUALT_DAAL liuzan::LZ_DAAL_THROW_EXCEPTION
 #elif defined(DYNAMIC_ASSERT_ABORT)
-#define DEFUALT_DAAL LZ_DAAL_ABORT
+#define DEFUALT_DAAL liuzan::LZ_DAAL_ABORT
 #else //Nothing defined
-#define DEFUALT_DAAL LZ_DAAL_NONE
+#define DEFUALT_DAAL liuzan::LZ_DAAL_NONE
 #endif //DYNAMIC_ASSERT_*
 #endif //DEBUG
 
@@ -59,59 +59,48 @@ namespace liuzan
     constexpr bool AssertIsWorkable() { return DAAL > LZ_DAAL_NONE; }
 
     template<bool Workable = AssertIsWorkable<DEFUALT_DAAL>()>
-    void DynamicAssert(bool inPredicate, std::string const & inMsg)
+    void __DynamicAssert__(bool inPredicate, std::string const & inMsg)
     {
         if (inPredicate) return;
 
         switch (DEFUALT_DAAL)
         {
             case LZ_DAAL_ERROR_MESSAGE:
-            {
-                std::cerr << "Assert Failed: " << inMsg << std::endl;
-                break;
-            }
+                {
+                    std::cerr << "Assert Failed: " << inMsg << std::endl;
+                    break;
+                }
             case LZ_DAAL_THROW_EXCEPTION:
-            {
-                throw AssertException(inMsg);
-            }
+                {
+                    throw AssertException(inMsg);
+                }
             case LZ_DAAL_ABORT:
-            {
-                std::terminate();
-            }
+                {
+                    std::terminate();
+                }
             default:
-            {
-                break;
-            }
+                {
+                    break;
+                }
         }
     }
 
     template<bool Workable = AssertIsWorkable<DEFUALT_DAAL>()>
-    void DynamicAssert(bool inPredicate, char const * inMsg)
+    void __DynamicAssert__(bool inPredicate, char const * inMsg)
     {
         std::string vTempStr(inMsg);
-        DynamicAssert<Workable>(inPredicate, vTempStr);
+        __DynamicAssert__<Workable>(inPredicate, vTempStr);
     }
 
     template<bool Workable = AssertIsWorkable<DEFUALT_DAAL>()>
-    void DynamicAssert(bool inPredicate)
+    void __DynamicAssert__(bool inPredicate)
     {
         std::string vTempStr("");
-        DynamicAssert<Workable>(inPredicate, vTempStr);
+        __DynamicAssert__<Workable>(inPredicate, vTempStr);
     }
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-    template<>
-    void DynamicAssert<false>(bool inPredicate, std::string const & inMsg) {}
-
-    template<>
-    void DynamicAssert<false>(bool inPredicate, char const * inMsg) {}
-
-    template<>
-    void DynamicAssert<false>(bool inPredicate) {}
-#pragma GCC diagnostic pop
-
-#define StaticAssert static_assert
 }  // namesapce liuzan
+
+#define DynamicAssert liuzan::__DynamicAssert__<>
+#define StaticAssert static_assert
 
 #endif // LIUZAN_COMMON_ASSERT_H

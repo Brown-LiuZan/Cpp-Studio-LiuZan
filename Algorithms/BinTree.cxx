@@ -15,7 +15,7 @@
  * */
 
 #define DYNAMIC_ASSERT_EXCEPTION
-#include "Common/assert.h" //liuzan::DynamicAssert<>()
+
 #include <iostream>
 #include <string>
 #include <functional> //std::function<>
@@ -24,6 +24,8 @@
 #include <deque> //std::deque<>
 
 #include <gtest/gtest.h>
+
+#include "Common/assert.h" //DynamicAssert()
 
 template<typename DataType>
 class BinaryTreeNode
@@ -282,7 +284,7 @@ void MorrisPostorderTraversal(BinaryTreeNode<DataType> * inRoot,
                               std::function<void(DataType *, void *)> const & inFuncObj,
                               void * ioFuncArg)
 {
-    liuzan::DynamicAssert(false,
+    DynamicAssert(false,
         "Morris traversal isn't suitable to postorder traversal due to no recording space guarantee.\n"
         "In postorder traversel, the prevous/next node in order is the root of subtree.");
 }

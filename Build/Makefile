@@ -90,7 +90,7 @@ CXXFLAGS += -Wall -Wextra
 CXXFLAGS += -pthread
 #   Language options
 #STD_VER := 17 #C++17 is supported by g++-6.5.0 and later versions.
-STD_VER := 2a
+STD_VER := 11
 ifeq (${STD_VER}, 98)
     CXXFLAGS += -std=c++98
 else ifeq (${STD_VER}, 11)
