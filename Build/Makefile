@@ -89,8 +89,9 @@ CXXFLAGS += -Wall -Wextra
 #   Threading options
 CXXFLAGS += -pthread
 #   Language options
-#STD_VER := 17 #C++17 is supported by g++-6.5.0 and later versions.
-STD_VER := 11
+# For latest gtest/gmock to work, at least c++11 required.
+# C++17 is supported by g++-6.5.0 and later versions.
+STD_VER := 2a
 ifeq (${STD_VER}, 98)
     CXXFLAGS += -std=c++98
 else ifeq (${STD_VER}, 11)
@@ -115,9 +116,9 @@ endif
 LDFLAGS :=
 #   Statically linking the standard library under ${LIB_DIR}.
 LDFLAGS += -static-libstdc++ ${LIB_DIR}/libstdc++.a
-#   Other static libraries under system search paths. 
+#   Other static libraries under system search paths.
 LDFLAGS += -lpthread
-#   Other static libraries under given search paths. 
+#   Other static libraries under given search paths.
 #     For example, lib${LibraryNameSuffix}.a
 #LDFLAGS += -L${StaticLibraryPath} -l${LibraryNameSuffix}
 # How about dynamically linking?
