@@ -602,4 +602,33 @@ TEST(TSEpiIntOps, TCDivide)
     }
 }
 
+double Pow(double base, unsigned index)
+{
+    if (0 == index) {
+        return 1.0;
+    }
+
+    double vSum = 0.0;
+    double vItem = base;
+    if (index & 1) {
+        vSum += vItem;
+    }
+    index >>= 1;
+
+    while (0 != index) {
+        vItem *= vItem;
+        if (index & 1) {
+            vSum += vItem;
+        }
+        index >>= 1;
+    }
+
+    return vSum;
+}
+
+TEST(TSEpiIntOps, TCPow)
+{
+    EXPECT_DOUBLE_EQ(1.69, Pow(-1.3, 2));
+}
+
 #endif // __cplusplus > CPLUSPLUS_VAL_FOR_98
