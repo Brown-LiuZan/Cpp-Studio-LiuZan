@@ -310,3 +310,42 @@ TEST(TSEpiArray, TCInteger)
     Integer c = a * b;
     EXPECT_EQ(-1234 * 4321, static_cast<int64_t>(c));
 }
+
+struct StockTrade
+{
+    std::pair<int, int> mTradePoints;
+    int mBenefit;
+
+    StockTrade():
+        mTradePoints{0, 0},
+        mBenefit{0}
+    {}
+};
+std::pair<int, int> ChooseTradePoints(std::vector<int> stockPrices)
+{
+    StockTrade vOld;
+    StockTrade vNew;
+
+    for (size_t i = 1; i < stockPrices.size(); ++i) {
+        if (stockPrices[i] < stockPrices[vNew.mTradePoints.first]) {
+            vNew.mTradePoints.first = i;
+        } else if (stockPrices[i] > stockPrices[vNew.mTradePoints.second]) {
+            vNew.mTradePoints.second = i;
+            vNew.mBenefit = stockPrices[vNew.mTradePoints.second] -
+                stockPrices[vNew.mTradePoints.first];
+            if (vNew.mBenefit > vOld.mBenefit) {
+                vOld = vNew;
+            }
+        }
+    }
+
+    return vOld.mTradePoints;
+}
+
+TEST(TSEpiArray, TCChooseTradePoints)
+{
+    std::vector vPrices{3, 4, 6, 8, 11, 9, 6, 3, 1, 4, 6, 12, 11};
+    std::pair<int, int> vPoints = ChooseTradePoints(vPrices);
+    EXPECT_EQ(8, vPoints.first);
+    EXPECT_EQ(11, vPoints.second);
+}
