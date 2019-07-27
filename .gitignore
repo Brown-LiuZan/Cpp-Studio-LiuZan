@@ -1,7 +1,5 @@
 *.swp
 *.exe
-GTest
-GFlags
 Build/*.o
 Build/*.exe
 Build/*.a
