@@ -17,48 +17,58 @@ WARNING_ENABLED := 1
 ERROR_ENABLED := 1
 
 # C++ building tool chain
-BUILD_TOOL_CHAIN_VER := 9
+GCC_ROOT_DIR := /usr/local
+TOOL_PREFIX := brown-
+#GCC_ROOT_DIR := /home/zanliu/cfs-v3.0/cfs_ganesha/tools
+#TOOL_PREFIX :=
+BUILD_TOOL_CHAIN_VER := 8
 ifeq (${BUILD_TOOL_CHAIN_VER}, 4)
-    BUILD_CHAIN_DIR := /usr/local/gcc-4.9.4/bin
-    LIB_DIR := /usr/local/gcc-4.9.4/lib64
-    CXX := ${BUILD_CHAIN_DIR}/brown-g++-4.9.4
-    AR := ${BUILD_CHAIN_DIR}/brown-gcc-ar-4.9.4
-    NM := ${BUILD_CHAIN_DIR}/brown-gcc-nm-4.9.4
+    BUILD_CHAIN_DIR := ${GCC_ROOT_DIR}/gcc-4.9.4/bin
+    CXX_LIB_DIR := ${GCC_ROOT_DIR}/gcc-4.9.4/lib64
+	CXX_HEADER_DIR := ${GCC_ROOT_DIR}/gcc-4.9.4/include/c++/4.9.4
+    CXX := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}g++-4.9.4
+    AR := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}gcc-ar-4.9.4
+    NM := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}gcc-nm-4.9.4
 else ifeq (${BUILD_TOOL_CHAIN_VER}, 5)
-    BUILD_CHAIN_DIR := /usr/local/gcc-5.5.0/bin
-    LIB_DIR := /usr/local/gcc-5.5.0/lib64
-    CXX := ${BUILD_CHAIN_DIR}/brown-g++-5.5.0
-    AR := ${BUILD_CHAIN_DIR}/brown-gcc-ar-5.5.0
-    NM := ${BUILD_CHAIN_DIR}/brown-gcc-nm-5.5.0
+    BUILD_CHAIN_DIR := ${GCC_ROOT_DIR}/gcc-5.5.0/bin
+    CXX_LIB_DIR := ${GCC_ROOT_DIR}/gcc-5.5.0/lib64
+	CXX_HEADER_DIR := ${GCC_ROOT_DIR}/gcc-5.5.0/include/c++/5.5.0
+    CXX := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}g++-5.5.0
+    AR := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}gcc-ar-5.5.0
+    NM := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}gcc-nm-5.5.0
 else ifeq (${BUILD_TOOL_CHAIN_VER}, 6)
 #   constexpr supported from this version on
-    BUILD_CHAIN_DIR := /usr/local/gcc-6.5.0/bin
-    LIB_DIR := /usr/local/gcc-6.5.0/lib64
-    CXX := ${BUILD_CHAIN_DIR}/brown-g++-6.5.0
-    AR := ${BUILD_CHAIN_DIR}/brown-gcc-ar-6.5.0
-    NM := ${BUILD_CHAIN_DIR}/brown-gcc-nm-6.5.0
+    BUILD_CHAIN_DIR := ${GCC_ROOT_DIR}/gcc-6.5.0/bin
+    CXX_LIB_DIR := ${GCC_ROOT_DIR}/gcc-6.5.0/lib64
+	CXX_HEADER_DIR := ${GCC_ROOT_DIR}/gcc-6.5.0/include/c++/6.5.0
+    CXX := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}g++-6.5.0
+    AR := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}gcc-ar-6.5.0
+    NM := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}gcc-nm-6.5.0
 else ifeq (${BUILD_TOOL_CHAIN_VER}, 7)
-    BUILD_CHAIN_DIR := /usr/local/gcc-7.4.0/bin
-    LIB_DIR := /usr/local/gcc-7.4.0/lib64
-    CXX := ${BUILD_CHAIN_DIR}/brown-g++-7.4.0
-    AR := ${BUILD_CHAIN_DIR}/brown-gcc-ar-7.4.0
-    NM := ${BUILD_CHAIN_DIR}/brown-gcc-nm-7.4.0
+    BUILD_CHAIN_DIR := ${GCC_ROOT_DIR}/gcc-7.4.0/bin
+    CXX_LIB_DIR := ${GCC_ROOT_DIR}/gcc-7.4.0/lib64
+	CXX_HEADER_DIR := ${GCC_ROOT_DIR}/gcc-7.4.0/include/c++/7.4.0
+    CXX := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}g++-7.4.0
+    AR := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}gcc-ar-7.4.0
+    NM := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}gcc-nm-7.4.0
 else ifeq (${BUILD_TOOL_CHAIN_VER}, 8)
-    BUILD_CHAIN_DIR := /usr/local/gcc-8.3.0/bin
-    LIB_DIR := /usr/local/gcc-8.3.0/lib64
-    CXX := ${BUILD_CHAIN_DIR}/brown-g++-8.3.0
-    AR := ${BUILD_CHAIN_DIR}/brown-gcc-ar-8.3.0
-    NM := ${BUILD_CHAIN_DIR}/brown-gcc-nm-8.3.0
+    BUILD_CHAIN_DIR := ${GCC_ROOT_DIR}/gcc-8.3.0/bin
+    CXX_LIB_DIR := ${GCC_ROOT_DIR}/gcc-8.3.0/lib64
+	CXX_HEADER_DIR := ${GCC_ROOT_DIR}/gcc-8.3.0/include/c++/8.3.0
+    CXX := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}g++-8.3.0
+    AR := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}gcc-ar-8.3.0
+    NM := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}gcc-nm-8.3.0
 else ifeq (${BUILD_TOOL_CHAIN_VER}, 9)
-    BUILD_CHAIN_DIR := /usr/local/gcc-9.1.0/bin
-    LIB_DIR := /usr/local/gcc-9.1.0/lib64
-    CXX := ${BUILD_CHAIN_DIR}/brown-g++-9.1.0
-    AR := ${BUILD_CHAIN_DIR}/brown-gcc-ar-9.1.0
-    NM := ${BUILD_CHAIN_DIR}/brown-gcc-nm-9.1.0
+    BUILD_CHAIN_DIR := ${GCC_ROOT_DIR}/gcc-9.1.0/bin
+    CXX_LIB_DIR := ${GCC_ROOT_DIR}/gcc-9.1.0/lib64
+	CXX_HEADER_DIR := ${GCC_ROOT_DIR}/gcc-9.1.0/include/c++/9.1.0
+    CXX := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}g++-9.1.0
+    AR := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}gcc-ar-9.1.0
+    NM := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}gcc-nm-9.1.0
 endif # BUILD_TOOL_CHAIN_VER
 ifeq (${INFO_ENABLED}, 1)
 $(info "Building tool chain directory: ${BUILD_CHAIN_DIR}")
-$(info "Library directory of given building tool chain: ${LIB_DIR}")
+$(info "Library directory of given building tool chain: ${CXX_LIB_DIR}")
 $(info "g++: ${CXX}")
 $(info "ar: ${AR}")
 $(info "nm: ${NM}")
@@ -68,6 +78,7 @@ endif
 # Flags passed to the preprocessor.
 #   '-isystem' for '#include<*>'
 CPPFLAGS :=
+CPPFLAGS += -isystem ${CXX_HEADER_DIR}
 #     Set Google Test's header directory as a system directory, such that
 #     the compiler doesn't generate warnings in Google Test headers.
 CPPFLAGS += -isystem ${GTEST_DIR}/include
@@ -91,7 +102,7 @@ CXXFLAGS += -pthread
 #   Language options
 # For latest gtest/gmock to work, at least c++11 required.
 # C++17 is supported by g++-6.5.0 and later versions.
-STD_VER := 2a
+STD_VER := 17
 ifeq (${STD_VER}, 98)
     CXXFLAGS += -std=c++98
 else ifeq (${STD_VER}, 11)
@@ -114,8 +125,8 @@ endif
 
 # Flags passed to the linker.
 LDFLAGS :=
-#   Statically linking the standard library under ${LIB_DIR}.
-LDFLAGS += -static-libstdc++ ${LIB_DIR}/libstdc++.a
+#   Statically linking the standard library under ${CXX_LIB_DIR}.
+LDFLAGS += -static-libstdc++ ${CXX_LIB_DIR}/libstdc++.a
 #   Other static libraries under system search paths.
 LDFLAGS += -lpthread
 #   Other static libraries under given search paths.
