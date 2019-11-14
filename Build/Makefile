@@ -21,7 +21,7 @@ GCC_ROOT_DIR := /usr/local
 TOOL_PREFIX := brown-
 #GCC_ROOT_DIR := /home/zanliu/cfs-v3.0/cfs_ganesha/tools
 #TOOL_PREFIX :=
-BUILD_TOOL_CHAIN_VER := 8
+BUILD_TOOL_CHAIN_VER := 9
 ifeq (${BUILD_TOOL_CHAIN_VER}, 4)
     BUILD_CHAIN_DIR := ${GCC_ROOT_DIR}/gcc-4.9.4/bin
     CXX_LIB_DIR := ${GCC_ROOT_DIR}/gcc-4.9.4/lib64
@@ -59,12 +59,12 @@ else ifeq (${BUILD_TOOL_CHAIN_VER}, 8)
     AR := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}gcc-ar-8.3.0
     NM := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}gcc-nm-8.3.0
 else ifeq (${BUILD_TOOL_CHAIN_VER}, 9)
-    BUILD_CHAIN_DIR := ${GCC_ROOT_DIR}/gcc-9.1.0/bin
-    CXX_LIB_DIR := ${GCC_ROOT_DIR}/gcc-9.1.0/lib64
-	CXX_HEADER_DIR := ${GCC_ROOT_DIR}/gcc-9.1.0/include/c++/9.1.0
-    CXX := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}g++-9.1.0
-    AR := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}gcc-ar-9.1.0
-    NM := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}gcc-nm-9.1.0
+    BUILD_CHAIN_DIR := ${GCC_ROOT_DIR}/gcc-9.2.0/bin
+    CXX_LIB_DIR := ${GCC_ROOT_DIR}/gcc-9.2.0/lib64
+	CXX_HEADER_DIR := ${GCC_ROOT_DIR}/gcc-9.2.0/include/c++/9.2.0
+    CXX := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}g++-9.2.0
+    AR := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}gcc-ar-9.2.0
+    NM := ${BUILD_CHAIN_DIR}/${TOOL_PREFIX}gcc-nm-9.2.0
 endif # BUILD_TOOL_CHAIN_VER
 ifeq (${INFO_ENABLED}, 1)
 $(info "Building tool chain directory: ${BUILD_CHAIN_DIR}")
